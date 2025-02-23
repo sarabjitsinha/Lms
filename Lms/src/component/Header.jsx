@@ -1,11 +1,16 @@
 import { Link } from "react-router-dom";
-import userContext from "../utils/userContext";
+import { Mycontext } from "../utils/Mycontext";
 import { useContext } from "react";
-
+import { useNavigate } from "react-router-dom";
 
 function Header(){
-    const {Username}=useContext(userContext)
-    
+    const {value,setvalue}=useContext(Mycontext)
+    const navigate=useNavigate();
+
+    function handleclick(){
+        setvalue('');
+        navigate('/')
+    }
 
     return(
         <div>
@@ -13,8 +18,11 @@ function Header(){
                 <li><Link to='/'>Home</Link></li>
                 <li><Link to='/login'>Login</Link></li>
                 <li><Link to='/register'>Register</Link></li>
-            
-                <span>{Username}</span>
+            {value &&
+                <span>Welcome-{value}</span> }
+
+               {value && <button type="submit" className=" bg-teal-600 rounded-4xl hover:cursor-pointer" 
+               onClick={handleclick}>Logout</button> }
          </ul>
         </div>
     )

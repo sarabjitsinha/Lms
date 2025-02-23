@@ -42,8 +42,7 @@ app.post('/register',(req,res)=>{
 app.post('/login', (req,res)=>{
     const {name,password}=req.body
     student.findOne({name:name}).then((stud)=>{
-        console.log(stud)
-        if(stud){
+       if(stud){
         if(stud.password===password){
             res.json("success")
         }

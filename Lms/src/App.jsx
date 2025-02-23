@@ -1,24 +1,19 @@
 import "./App.css"
-import Header from "./component/Header"
-// import Login from "./component/Login";
-// import Registration from "./component/Registration";
+import Header from "./component/Header";
 import { Outlet } from "react-router-dom";
-import userContext from "./utils/userContext";
+import { Mycontext } from "./utils/Mycontext";
 import { useState } from "react";
 
 function App() {
-
-    const [usrname,setUserName]=useState("");
-
-    return(
+    const [value,setvalue]=useState('')
+    
+   return(
         <div>
-            <userContext.Provider value={{Username:usrname, setUserName}}>
-            <Header/>
-            </userContext.Provider>
-            <Outlet/>
-            {/* <Login/>
-            <Registration/> */}
-        
+            <Mycontext.Provider value={{value:value,setvalue:setvalue}}>
+                <Header/>
+                <Outlet/> 
+            </Mycontext.Provider>
+                    
         </div>
     )
 }
