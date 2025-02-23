@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import React, { useState } from "react";
 
@@ -8,7 +7,7 @@ function Registration(){
     const [email,setemail]=useState("");
     const [password,setpassord]=useState("")
         
-        function handlesubmit(e: React.FormEvent){
+        function handlesubmit(e){
             e.preventDefault();
             axios.post('http://localhost:2700/register',{name,email,password})
             .then(resp=>console.log(resp))

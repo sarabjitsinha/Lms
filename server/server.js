@@ -38,3 +38,21 @@ app.post('/register',(req,res)=>{
 // student.create(req.body).then((student)=>res.json(student)).catch((err)=>res.json(err))
 
 })
+
+app.post('/login', (req,res)=>{
+    const {name,password}=req.body
+    student.findOne({name:name}).then((stud)=>{
+        console.log(stud)
+        if(stud){
+        if(stud.password===password){
+            res.json("success")
+        }
+        else{
+            res.json('login failed')
+        }
+    }
+    else{
+        res.json("user not registered")
+    }
+    }).catch(err=>console.log(err))
+})

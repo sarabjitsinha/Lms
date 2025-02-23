@@ -6,12 +6,17 @@ import { createBrowserRouter,RouterProvider } from 'react-router-dom'
 import Error from './component/Error'
 import Registration from './component/Registration'
 import Login from './component/Login'
+import Home from './component/Home'
 
 const appRouter=createBrowserRouter([
   {path:'/',
    element:<App/>,
   errorElement:<Error/>,
   children:[
+    {
+      path:'/userhome',
+      element:<Home/>
+    },
     {
       path:'/',
       element:<Registration/>
@@ -28,7 +33,7 @@ const appRouter=createBrowserRouter([
   
 ])
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById('root')).render(
   <RouterProvider  router={appRouter} />
   
 )
