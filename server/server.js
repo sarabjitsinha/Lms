@@ -1,57 +1,78 @@
-import mongoose from "mongoose";
 import express from "express";
-import cors from "cors"
-// import jwt from "jsonwebtoken"
-import { student } from "./Model/Student.js";
+import cors from "cors";
+import mongoose from "mongoose";
+import {
+  register,
+  login,
+  getDashboardOverview,
+  getCourses,
+  getCourseById,
+  toggleLessonComplete,
+  createCourse,
+  getQuizzes,
+  submitQuiz,
+  getForumPosts,
+  createForumPost,
+  addForumReply,
+  upvoteForumPost,
+  getCertificates,
+  getBadges
+} from "./Controller/controller.js";
 
-const app=new express();
-app.use(cors())
-app.use(express.json())
-app.listen(2700,()=>{
-    console.log("server started")
+const app = express();
+const PORT = process.env.PORT || 2700;
+
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+app.use(express.json());
+
+// Optional MongoDB Connection with auto-fallback
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/LMS";
+mongoose.connect(MONGO_URI, {
+  serverSelectionTimeoutMS: 2000
+}).then(() => {
+  console.log("Connected to MongoDB successfully");
+}).catch((err) => {
+  console.log("MongoDB connection optional notice: running in resilient in-memory & persistence mode.");
 });
 
-mongoose.connect("mongodb://127.0.0.1:27017/LMS");
-const db=mongoose.connection;
+// Health check
+app.get("/api/health", (req, res) => {
+  res.json({ status: "healthy", timestamp: new Date().toISOString() });
+});
 
-db.on("open",()=>{
-    console.log("Connection to database is successful")
-})
+// Authentication Routes
+app.post("/register", register);
+app.post("/api/auth/register", register);
+app.post("/login", login);
+app.post("/api/auth/login", login);
 
-db.on("error",()=>{
-    console.log("error connecting to server")
-})
+// Dashboard Overview Route
+app.get("/api/dashboard/overview", getDashboardOverview);
 
-app.post('/register',(req,res)=>{
-    async function insert() {
-        const {name,email,password}=req.body;
-    const newrec=new student({
-        name,
-        email,
-        password
-    }) 
-    await newrec.save();
-    res.status(201);
-    }
-   
-   insert();
-// student.create(req.body).then((student)=>res.json(student)).catch((err)=>res.json(err))
+// Course Routes
+app.get("/api/courses", getCourses);
+app.get("/api/courses/:id", getCourseById);
+app.post("/api/courses", createCourse);
+app.patch("/api/courses/:courseId/lessons/:lessonId/toggle", toggleLessonComplete);
 
-})
+// Quiz Routes
+app.get("/api/quizzes", getQuizzes);
+app.post("/api/quizzes/:id/submit", submitQuiz);
 
-app.post('/login', (req,res)=>{
-    const {name,password}=req.body
-    student.findOne({name:name}).then((stud)=>{
-       if(stud){
-        if(stud.password===password){
-            res.json("success")
-        }
-        else{
-            res.json('login failed')
-        }
-    }
-    else{
-        res.json("user not registered")
-    }
-    }).catch(err=>console.log(err))
-})
+// Forum Routes
+app.get("/api/forum/posts", getForumPosts);
+app.post("/api/forum/posts", createForumPost);
+app.post("/api/forum/posts/:id/reply", addForumReply);
+app.post("/api/forum/posts/:id/upvote", upvoteForumPost);
+
+// Certificates & Badges Routes
+app.get("/api/certificates", getCertificates);
+app.get("/api/badges", getBadges);
+
+app.listen(PORT, () => {
+  console.log(`LMS Server running on http://localhost:${PORT}`);
+});
